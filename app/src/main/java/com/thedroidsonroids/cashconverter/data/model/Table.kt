@@ -5,5 +5,5 @@ data class Table(
     val no: String,
     val tradingDate: String,
     val effectiveDate: String,
-//    val rates: List<Rate>,
+    val rates: List<Rate>,
 )
