@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thedroidsonroids.cashconverter.R
+import com.thedroidsonroids.cashconverter.core.resource.Resource
 import com.thedroidsonroids.cashconverter.databinding.FragmentListingBinding
 import com.thedroidsonroids.cashconverter.ui.listing.ListingFragmentVM.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,8 +52,32 @@ class ListingFragment : Fragment(R.layout.fragment_listing) {
     }
 
     private fun initObservers() {
+        initTablesObserver()
+//        initTableCObserver()
+    }
+
+    private fun initTablesObserver(){
+        viewModel.tables.observe(viewLifecycleOwner){
+            when(it){
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    listingAdapter.submitList(it.data?.get(0)?.rates)
+                }
+                is  Resource.Error -> {
+                    Toast.makeText(requireContext(), it.error, Toast.LENGTH_LONG).show()
+                    Log.d("TAG", "ERROR: ${it.error} ")
+                }
+                is Resource.Loading ->{
+                    Toast.makeText(requireContext(), "LOADING", Toast.LENGTH_LONG).show()
+                    Log.d("TAG", "LOADING ")
+                }
+            }
+        }
+    }
+
+    private fun initTableCObserver() {
         lifecycleScope.launchWhenStarted {
-            viewModel.table.collect {
+            viewModel.tableNbp.collect {
                 when (it) {
                     is TableEvent.Success -> {
                         binding.progressBar.visibility = View.GONE
