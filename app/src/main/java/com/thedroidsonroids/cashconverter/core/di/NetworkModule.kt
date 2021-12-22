@@ -1,9 +1,12 @@
 package com.thedroidsonroids.cashconverter.core.di
 
+import android.content.Context
+import com.thedroidsonroids.cashconverter.core.resource.NetworkConnectionChecker
 import com.thedroidsonroids.cashconverter.data.api.NbpApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -33,6 +36,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNbpApi(retrofit: Retrofit): NbpApi =
-        retrofit.create(NbpApi::class.java)
+    fun provideNbpApi(retrofit: Retrofit): NbpApi = retrofit.create(NbpApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideNetworkConnectionChecker(@ApplicationContext appContext: Context) = NetworkConnectionChecker(appContext)
 }

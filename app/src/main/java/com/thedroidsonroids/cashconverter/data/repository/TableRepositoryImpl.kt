@@ -1,48 +1,36 @@
 package com.thedroidsonroids.cashconverter.data.repository
 
-import android.util.Log
 import androidx.room.withTransaction
-import com.thedroidsonroids.cashconverter.core.resource.Resource
+import com.thedroidsonroids.cashconverter.core.resource.NetworkConnectionChecker
 import com.thedroidsonroids.cashconverter.core.resource.networkBoundResource
 import com.thedroidsonroids.cashconverter.data.api.NbpApi
 import com.thedroidsonroids.cashconverter.data.db.TableNbpDB
-import com.thedroidsonroids.cashconverter.data.model.TableNbp
 import javax.inject.Inject
 
 class TableRepositoryImpl @Inject constructor(
     private val nbpApi: NbpApi,
     private val tableNbpDB: TableNbpDB,
+    private val networkConnectionChecker: NetworkConnectionChecker
 ) {
     private val tableNbpDao = tableNbpDB.getTableNbpDao()
 
 
     fun getTableNbp() = networkBoundResource(
         query = {
-            tableNbpDao.getTableNbP()
+            tableNbpDao.getTableNbp()
         },
         fetch = {
             nbpApi.getTables()
         },
         saveFetchResult = {
             tableNbpDB.withTransaction {
-                tableNbpDao.deleteTableNbP()
+                tableNbpDao.deleteTableNbp()
                 tableNbpDao.insertTableNbp(it)
-
             }
+        },
+        shouldFetch = {
+            networkConnectionChecker.isConnected()
         }
     )
-
-    suspend fun getTableC(): Resource<TableNbp> {
-        return try {
-            val response = nbpApi.getTableC()
-            val result = response.body()?.get(0)
-            if (response.isSuccessful && result != null) {
-                Resource.Success(result)
-            } else
-                Resource.Error("${response.message()} API ERROR")
-        } catch (e: Exception) {
-            Resource.Error("${e.message} 12345" ?: "Api response error")
-        }
-    }
 
 }

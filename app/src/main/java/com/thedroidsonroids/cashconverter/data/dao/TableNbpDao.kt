@@ -15,10 +15,10 @@ interface TableNbpDao {
     suspend fun insertTableNbp(tablesNbp: List<TableNbp>)
 
     @Query("DELETE FROM $DB_NAME")
-    suspend fun deleteTableNbP()
+    suspend fun deleteTableNbp()
 
     @Query("SELECT * FROM $DB_NAME ")
-    fun getTableNbP(): Flow<List<TableNbp>>
+    fun getTableNbp(): Flow<List<TableNbp>>
 
     @Query("SELECT * FROM $DB_NAME ")
     fun getTestTableNbP(): List<TableNbp>

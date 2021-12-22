@@ -14,34 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListingFragmentVM @Inject constructor(
-     val repositoryImpl: TableRepositoryImpl
-): ViewModel() {
-
-    private val _tableNbp = MutableStateFlow<TableEvent>(TableEvent.Empty)
-    val tableNbp: StateFlow<TableEvent> = _tableNbp
+class ListingFragmentVM @Inject constructor(private val repositoryImpl: TableRepositoryImpl) : ViewModel() {
 
     val tables = repositoryImpl.getTableNbp().asLiveData()
-
-    fun getTableC(){
-        viewModelScope.launch(Dispatchers.IO) {
-            _tableNbp.value = TableEvent.Loading
-            when(val response = repositoryImpl.getTableC()){
-                is Resource.Error -> {_tableNbp.value = TableEvent.Failure(response.error!!)}
-                is Resource.Success ->{
-                    val currency = response.data!!
-                    _tableNbp.value = TableEvent.Success(currency)
-                }
-                is Resource.Loading ->{_tableNbp.value = TableEvent.Loading}
-            }
-        }
-    }
-
-
-    sealed class TableEvent {
-        class Success(val data: TableNbp) : TableEvent()
-        class Failure(val errorText: String) : TableEvent()
-        object Loading : TableEvent()
-        object Empty : TableEvent()
-    }
 }

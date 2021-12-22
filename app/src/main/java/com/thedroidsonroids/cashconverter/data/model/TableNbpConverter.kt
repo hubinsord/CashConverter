@@ -20,18 +20,4 @@ class TableNbpConverter {
         val type = object : TypeToken<List<Rate>>() {}.type
         return gson.fromJson(string, type)
     }
-
-//    private val tablesType = Types.newParameterizedType(List::class.java, Rate::class.java)
-//    private val tablesAdapter = Moshi.Builder().build().adapter<List<Rate>>(tablesType)
-//
-//    @TypeConverter
-//    fun toJson(value: List<Rate>): String {
-//
-//        return tablesAdapter.toJson(value)
-//    }
-//
-//    @TypeConverter
-//    fun fromJson(string: String): List<Rate>{
-//        return tablesAdapter.fromJson(string).orEmpty()
-//    }
 }

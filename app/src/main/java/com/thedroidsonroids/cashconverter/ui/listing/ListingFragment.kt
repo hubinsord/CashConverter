@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thedroidsonroids.cashconverter.R
+import com.thedroidsonroids.cashconverter.core.extension.gone
 import com.thedroidsonroids.cashconverter.core.resource.Resource
 import com.thedroidsonroids.cashconverter.databinding.FragmentListingBinding
 import com.thedroidsonroids.cashconverter.ui.listing.ListingFragmentVM.*
@@ -36,7 +37,6 @@ class ListingFragment : Fragment(R.layout.fragment_listing) {
         viewModel.getTableC()
         initViews()
         initObservers()
-
     }
 
     override fun onDestroyView() {
@@ -53,21 +53,23 @@ class ListingFragment : Fragment(R.layout.fragment_listing) {
 
     private fun initObservers() {
         initTablesObserver()
-//        initTableCObserver()
     }
 
-    private fun initTablesObserver(){
-        viewModel.tables.observe(viewLifecycleOwner){
-            when(it){
+    private fun initTablesObserver() {
+        viewModel.tables.observe(viewLifecycleOwner) {
+            when(it) {
                 is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    listingAdapter.submitList(it.data?.get(0)?.rates)
+                    hideProgressBar()
+                    val rates = it.data?.getOrNull(0)?.rates
+                    if (rates.isNullOrEmpty()) Toast.makeText(requireContext(), "test", Toast.LENGTH_LONG).show()
+                    listingAdapter.submitList(rates)
                 }
-                is  Resource.Error -> {
+                is Resource.Error -> {
                     Toast.makeText(requireContext(), it.error, Toast.LENGTH_LONG).show()
+                    hideProgressBar()
                     Log.d("TAG", "ERROR: ${it.error} ")
                 }
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     Toast.makeText(requireContext(), "LOADING", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "LOADING ")
                 }
@@ -75,30 +77,7 @@ class ListingFragment : Fragment(R.layout.fragment_listing) {
         }
     }
 
-    private fun initTableCObserver() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.tableNbp.collect {
-                when (it) {
-                    is TableEvent.Success -> {
-                        binding.progressBar.visibility = View.GONE
-                        listingAdapter.submitList(it.data.rates)
-                        Toast.makeText(requireContext(), it.data.rates[0].currency, Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "Success: ${it.data.rates[0].currency} ")
-                    }
-                    is TableEvent.Loading -> {
-                        Toast.makeText(requireContext(), "LOADING", Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "LOADING ")
-                    }
-                    is TableEvent.Failure -> {
-                        Toast.makeText(requireContext(), it.errorText, Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "ERROR: ${it.errorText} ")
-                    }
-                    is TableEvent.Empty -> {
-                        Toast.makeText(requireContext(), "EMPTY", Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "EMPTY")
-                    }
-                }
-            }
-        }
+    private fun hideProgressBar() {
+        binding.progressBar.gone()
     }
 }
