@@ -1,4 +1,4 @@
-package com.cashconverter
+package com.thedroidsonroids.cashconverter
 
 import org.junit.Test
 
