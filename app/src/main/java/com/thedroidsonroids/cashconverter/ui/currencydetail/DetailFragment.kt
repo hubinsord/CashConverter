@@ -5,10 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.thedroidsonroids.cashconverter.R
+import com.thedroidsonroids.cashconverter.core.extension.gone
+import com.thedroidsonroids.cashconverter.core.extension.show
 import com.thedroidsonroids.cashconverter.databinding.FragmentDetailBinding
+import kotlinx.coroutines.flow.collect
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
@@ -27,6 +32,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         viewModel.loadData(args.rate)
+        initListeners()
+        initObservers()
     }
 
     override fun onDestroyView() {
@@ -34,4 +41,38 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         _binding = null
     }
 
+    private fun initListeners() {
+        binding.btnConvertFromPln.setOnClickListener {
+            viewModel.btnConvertFromPlnClicked()
+        }
+        binding.btnConvertToPln.setOnClickListener {
+            viewModel.btnConvertToPlnClicked()
+        }
+    }
+
+    private fun initObservers() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.conversion.collect { event ->
+                when (event) {
+                    is DetailVM.CurrencyEvent.Success -> {
+                        hideProgressbar()
+                    }
+                    is DetailVM.CurrencyEvent.Failure -> {
+                        hideProgressbar()
+                        Toast.makeText(requireContext(), event.errorText, Toast.LENGTH_LONG).show()
+                    }
+                    is DetailVM.CurrencyEvent.Loading -> {
+                        binding.progressBar.show()
+                    }
+                    is DetailVM.CurrencyEvent.Empty -> {
+                        hideProgressbar()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun hideProgressbar() {
+        binding.progressBar.gone()
+    }
 }

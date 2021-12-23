@@ -72,8 +72,7 @@ class ListingFragment : Fragment(R.layout.fragment_listing), ListingAdapter.Comp
                     Log.d("TAG", "ERROR: ${it.error} ")
                 }
                 is Resource.Loading -> {
-                    Toast.makeText(requireContext(), "LOADING", Toast.LENGTH_LONG).show()
-                    Log.d("TAG", "LOADING ")
+                    Toast.makeText(requireContext(), getString(R.string.listing_loading_label), Toast.LENGTH_SHORT).show()
                 }
             }
         }
