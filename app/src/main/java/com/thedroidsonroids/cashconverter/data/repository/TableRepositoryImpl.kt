@@ -5,17 +5,18 @@ import com.thedroidsonroids.cashconverter.core.resource.NetworkConnectionChecker
 import com.thedroidsonroids.cashconverter.core.resource.networkBoundResource
 import com.thedroidsonroids.cashconverter.data.api.NbpApi
 import com.thedroidsonroids.cashconverter.data.db.TableNbpDB
+import com.thedroidsonroids.cashconverter.domain.TableNbpRepository
 import javax.inject.Inject
 
 class TableRepositoryImpl @Inject constructor(
     private val nbpApi: NbpApi,
     private val tableNbpDB: TableNbpDB,
     private val networkConnectionChecker: NetworkConnectionChecker
-) {
+): TableNbpRepository {
     private val tableNbpDao = tableNbpDB.getTableNbpDao()
 
 
-    fun getTableNbp() = networkBoundResource(
+    override fun getTableNbp() = networkBoundResource(
         query = {
             tableNbpDao.getTableNbp()
         },

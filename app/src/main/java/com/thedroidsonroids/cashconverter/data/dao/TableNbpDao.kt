@@ -19,7 +19,4 @@ interface TableNbpDao {
 
     @Query("SELECT * FROM $DB_NAME ")
     fun getTableNbp(): Flow<List<TableNbp>>
-
-    @Query("SELECT * FROM $DB_NAME ")
-    fun getTestTableNbP(): List<TableNbp>
 }

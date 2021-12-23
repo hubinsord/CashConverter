@@ -2,6 +2,7 @@ package com.thedroidsonroids.cashconverter.core.di
 
 import android.content.Context
 import com.thedroidsonroids.cashconverter.core.resource.NetworkConnectionChecker
+import com.thedroidsonroids.cashconverter.data.Constants
 import com.thedroidsonroids.cashconverter.data.api.NbpApi
 import dagger.Module
 import dagger.Provides
@@ -29,7 +30,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl(NbpApi.BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .client(client)
             .build()

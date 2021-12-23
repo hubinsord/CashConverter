@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.thedroidsonroids.cashconverter.data.dao.TableNbpDao
 import com.thedroidsonroids.cashconverter.data.model.TableNbp
-import com.thedroidsonroids.cashconverter.data.model.TableNbpConverter
+import com.thedroidsonroids.cashconverter.data.db.coverter.TableNbpConverter
 
 @TypeConverters(TableNbpConverter::class)
 @Database(entities = [TableNbp::class], version = 1)
